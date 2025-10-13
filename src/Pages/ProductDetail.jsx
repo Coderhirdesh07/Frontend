@@ -8,7 +8,7 @@ function ProductDetails() {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const response = await fetch(`https://backend-sdh5.onrender.com/api/products/${id}`);
+        const response = await fetch(`https://backend-mql6.onrender.com/api/products/${id}`);
         if (!response.ok) {
           throw new Error('Failed to fetch product');
         }

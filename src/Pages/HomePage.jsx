@@ -6,7 +6,7 @@ import ProductCard from "../component/ProductCard";
 function HomePage(){
   const [product, setProduct] = useState(null);
   const [error, setError] = useState(null);
-  const url = "https://backend-sdh5.onrender.com/api/products";
+  const url = "https://backend-mql6.onrender.com/api/products";
 
   useEffect(() => {
     const fetchData = async () => {
