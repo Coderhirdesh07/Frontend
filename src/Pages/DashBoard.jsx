@@ -2,22 +2,29 @@ import React, { useEffect, useMemo, useState } from "react";
 import TaskCard from "../component/TaskCard";
 import { useNavigate } from "react-router-dom";
 import PrioritySection from "../component/PrioritySection";
-
-
-const MOCK_TASKS = [
-  { id: 1, title: "Design UI", dueDate: "2026-01-05", priority: "High", status: "Pending" },
-  { id: 2, title: "Fix Bug #123", dueDate: "2026-01-03", priority: "Medium", status: "Completed" },
-  { id: 3, title: "Write Docs", dueDate: "2026-01-07", priority: "Low", status: "Pending" },
-  { id: 4, title: "Deploy App", dueDate: "2026-01-06", priority: "High", status: "Pending" },
-  { id: 5, title: "Team Meeting", dueDate: "2026-01-04", priority: "Medium", status: "Pending" },
-];
+import axios from "axios"; // For API calls
 
 const Dashboard = () => {
   const [taskData, setTaskData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    setTaskData(MOCK_TASKS);
+    const fetchTasks = async () => {
+      try {
+        setLoading(true);
+        const response = await axios.get("/api/tasks"); // Replace with your API endpoint
+        setTaskData(response.data);
+      } catch (err) {
+        console.error(err);
+        setError("Failed to load tasks.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTasks();
   }, []);
 
   const stats = useMemo(() => {
@@ -35,6 +42,14 @@ const Dashboard = () => {
     Low: taskData.filter(t => t.priority === "Low"),
   }), [taskData]);
 
+  if (loading) {
+    return <div className="p-6">Loading tasks...</div>;
+  }
+
+  if (error) {
+    return <div className="p-6 text-red-500">{error}</div>;
+  }
+
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
       <div className="flex justify-between items-center mb-6">
@@ -47,6 +62,7 @@ const Dashboard = () => {
         </button>
       </div>
 
+      {/* Stats Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-6">
         <TaskCard title="Total Tasks" value={stats.total} color="blue-500" />
         <TaskCard title="Pending Tasks" value={stats.pending} color="yellow-500" />
@@ -54,6 +70,7 @@ const Dashboard = () => {
         <TaskCard title="High Priority" value={stats.highPriority} color="red-500" />
       </div>
 
+      {/* Tasks by Priority */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         <PrioritySection
           title="High Priority"
@@ -72,18 +89,21 @@ const Dashboard = () => {
         />
       </div>
 
+      {/* Recent Tasks */}
       <div className="bg-white p-4 rounded-lg shadow">
         <h2 className="font-bold mb-2">Recent Tasks</h2>
-
-        {taskData.slice(-5).reverse().map(task => (
-          <div
-            key={task.id}
-            className="flex justify-between items-center border-b py-2 last:border-b-0"
-          >
-            <p>{task.title}</p>
-            <p className="text-sm text-gray-500">{task.dueDate}</p>
-          </div>
-        ))}
+        {taskData
+          .sort((a, b) => new Date(b.dueDate) - new Date(a.dueDate)) // Latest first
+          .slice(0, 5)
+          .map(task => (
+            <div
+              key={task.id}
+              className="flex justify-between items-center border-b py-2 last:border-b-0"
+            >
+              <p>{task.title}</p>
+              <p className="text-sm text-gray-500">{task.dueDate}</p>
+            </div>
+          ))}
       </div>
     </div>
   );

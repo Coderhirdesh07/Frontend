@@ -3,44 +3,56 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 import { login } from '../../store/authSlice';
+import { API_CONFIG } from '../../config/index.config';
 
 function Login() {
   const { register, handleSubmit } = useForm();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false); // optional loading state
 
   const userLogin = async (data) => {
+    setError("");
+    setLoading(true);
+
     try {
       const payload = {
         email: data.email,
         password: data.password
       };
 
-      const response = await 
-       fetch("https://backend-mql6.onrender.com/api/user/login", {
+      const response = await fetch(`${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINT}/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
+        body: JSON.stringify(payload),
+        credentials: "include" // include cookies if your backend sets them
       });
-       
+
       const userdata = await response.json();
-      localStorage.setItem('token',userdata.token);
 
       if (!response.ok) {
         setError(userdata.message || "Invalid credentials");
         return;
       }
+
+      
+      if (userdata.token) {
+        localStorage.setItem('token', userdata.token);
+      }
+
+      // Dispatch user info and token to Redux
       dispatch(login({
-         token:userdata.token,
-         data:userdata.user
+         token: userdata.token,
+         data: userdata.user
       }));
 
-      navigate("/");
-      
+      navigate("/dashboard"); 
     } catch (err) {
-      console.log("Login error occurred:", err);
+      console.error("Login error occurred:", err);
       setError(err.message || "Something went wrong");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -67,8 +79,7 @@ function Login() {
             type="email"
             placeholder="you@example.com"
             className="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 transition duration-200"
-            required
-            {...register("email", { required: true })}
+            {...register("email", { required: "Email is required" })}
           />
         </div>
 
@@ -81,16 +92,16 @@ function Login() {
             type="password"
             placeholder="••••••••"
             className="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 transition duration-200"
-            required
-            {...register("password", { required: true })}
+            {...register("password", { required: "Password is required" })}
           />
         </div>
 
         <button
           type="submit"
           className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition duration-200"
+          disabled={loading}
         >
-          Login
+          {loading ? "Logging in..." : "Login"}
         </button>
 
         <p className="text-sm text-center text-gray-500">

@@ -8,20 +8,23 @@ import { API_CONFIG } from '../../config/index.config';
 
 function SignUp() {
   const [error, setError] = useState("");
-  
+  const [loading, setLoading] = useState(false); // optional loading state
+
   const {
     register,
     handleSubmit,
     watch,
     formState: { errors }
   } = useForm();
-  
+
   const password = watch("password");
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const create = async (data) => {
     setError("");
+    setLoading(true);
+
     const fullName = `${data.firstName} ${data.lastName}`;
     const payload = {
       name: fullName,
@@ -30,10 +33,11 @@ function SignUp() {
     };
 
     try {
-      const response = await fetch(`${API_CONFIG.BASE_URL/API_CONFIG.ENDPOINT}`, {
+      const response = await fetch(`${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINT}/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
+        body: JSON.stringify(payload),
+        credentials: "include" // include cookies if your backend sets them
       });
 
       const userdata = await response.json();
@@ -42,13 +46,17 @@ function SignUp() {
         setError(userdata.message || "Registration failed");
         return;
       }
+
       dispatch(login(userdata));
-      navigate("/");
+      navigate("/login");
     } catch (err) {
       console.error("Registration error:", err);
       setError(err.message || "Something went wrong");
+    } finally {
+      setLoading(false);
     }
   };
+
   return (
     <div className="flex justify-center items-center min-h-screen bg-gradient-to-r from-purple-100 via-white to-purple-100 px-4">
       <form
@@ -59,9 +67,7 @@ function SignUp() {
           Create an account
         </h2>
 
-        {error && (
-          <p className="text-red-500 text-center font-medium">{error}</p>
-        )}
+        {error && <p className="text-red-500 text-center font-medium">{error}</p>}
 
         <div className="flex flex-col sm:flex-row gap-4">
           <div className="flex-1">
@@ -144,8 +150,9 @@ function SignUp() {
         <button
           type="submit"
           className="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 rounded-lg transition"
+          disabled={loading}
         >
-          Sign Up
+          {loading ? "Creating account..." : "Sign Up"}
         </button>
 
         <p className="text-sm text-center text-gray-500">

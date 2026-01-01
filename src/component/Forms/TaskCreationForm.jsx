@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { API_CONFIG } from "../../config/index.config";
-
+import { useForm } from "react-hook-form";
 function TaskCreationForm() {
+  const {register,handleSubmit} = useForm();
   const [task, setTask] = useState({
     title: "",
     description: "",
@@ -13,11 +14,6 @@ function TaskCreationForm() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setTask((prev) => ({ ...prev, [name]: value }));
-  };
 
   const submit = async (e) => {
     e.preventDefault();
@@ -31,7 +27,7 @@ function TaskCreationForm() {
 
     try {
       setLoading(true);
-      await axios.post(API_CONFIG.ENDPOINT_2, task, {
+      await axios.post(`${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINT_2}/create`, task, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
@@ -54,7 +50,7 @@ function TaskCreationForm() {
   return (
     <div className="flex justify-center items-center p-6">
       <form
-        onSubmit={submit}
+        onSubmit={handleSubmit(submit)}
         className="w-full max-w-md bg-gray-100 flex flex-col gap-4 p-6 rounded-lg shadow"
       >
         <h2 className="text-xl font-semibold text-gray-700 text-center">
@@ -62,35 +58,35 @@ function TaskCreationForm() {
         </h2>
 
         <input
+          id="title"
           name="title"
           placeholder="Title *"
-          value={task.title}
-          onChange={handleChange}
           className="bg-white border rounded p-2 focus:outline-none focus:ring-2 focus:ring-blue-300"
+          {...register("title")}
         />
 
         <textarea
+          id="description"
           name="description"
           placeholder="Description"
-          value={task.description}
-          onChange={handleChange}
           rows={3}
           className="bg-white border rounded p-2 resize-none focus:outline-none focus:ring-2 focus:ring-blue-300"
+          {...register("description")}
         />
 
         <input
           type="date"
           name="dueDate"
-          value={task.dueDate}
-          onChange={handleChange}
+          id="duedate"
           className="bg-white border rounded p-2 focus:outline-none focus:ring-2 focus:ring-blue-300"
+          {...register("duedate")}
         />
 
         <select
           name="priority"
-          value={task.priority}
-          onChange={handleChange}
+          id="priority"
           className="bg-white border rounded p-2 focus:outline-none focus:ring-2 focus:ring-blue-300"
+          {...register("priority")}
         >
           <option value="low">Low Priority</option>
           <option value="medium">Medium Priority</option>
