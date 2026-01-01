@@ -1,0 +1,5 @@
+export const API_CONFIG = {
+    BASE_URL: "http://localhost:3000/api/",
+    ENDPOINT: "users",
+    ENDPOINT_2: "task"
+};

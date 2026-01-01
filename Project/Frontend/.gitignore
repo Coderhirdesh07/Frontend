@@ -1,0 +1,73 @@
+# =====================
+# OS-generated files
+# =====================
+.DS_Store
+.DS_Store?
+Thumbs.db
+ehthumbs.db
+desktop.ini
+
+# =====================
+# Logs
+# =====================
+*.log
+logs/
+
+# =====================
+# Environment variables
+# =====================
+.env
+.env.*
+!.env.example
+
+# =====================
+# Dependencies
+# =====================
+node_modules/
+vendor/
+
+# =====================
+# Build / output
+# =====================
+dist/
+build/
+out/
+target/
+
+# =====================
+# Python
+# =====================
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+env/
+
+# =====================
+# Java
+# =====================
+*.class
+*.jar
+*.war
+
+# =====================
+# IDEs & editors
+# =====================
+.vscode/
+.idea/
+*.swp
+*.swo
+*.swn
+
+# =====================
+# Testing / coverage
+# =====================
+coverage/
+.nyc_output/
+
+# =====================
+# Misc
+# =====================
+.cache/
+.tmp/
