@@ -4,9 +4,11 @@ import { useForm } from 'react-hook-form';
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router";
 import { login } from "../../store/authSlice";
+import { API_CONFIG } from '../../config/index.config';
 
 function SignUp() {
   const [error, setError] = useState("");
+  
   const {
     register,
     handleSubmit,
@@ -28,7 +30,7 @@ function SignUp() {
     };
 
     try {
-      const response = await fetch("https://backend-sdh5.onrender.com/api/user/register", {
+      const response = await fetch(`${API_CONFIG.BASE_URL/API_CONFIG.ENDPOINT}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
@@ -40,7 +42,6 @@ function SignUp() {
         setError(userdata.message || "Registration failed");
         return;
       }
-
       dispatch(login(userdata));
       navigate("/");
     } catch (err) {
@@ -48,7 +49,6 @@ function SignUp() {
       setError(err.message || "Something went wrong");
     }
   };
-
   return (
     <div className="flex justify-center items-center min-h-screen bg-gradient-to-r from-purple-100 via-white to-purple-100 px-4">
       <form
@@ -149,7 +149,7 @@ function SignUp() {
         </button>
 
         <p className="text-sm text-center text-gray-500">
-          Already have an account?{" "}
+           Already have an account?{" "}
           <Link to="/login" className="text-purple-600 hover:underline">
             Log in
           </Link>

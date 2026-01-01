@@ -1,65 +1,72 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
-import shopping from '../assets/pexels-solliefoto-298863.jpg';
-import ProductCard from "../component/ProductCard";
+import taskImg from "../assets/pexels-solliefoto-298863.jpg";
 
-function HomePage(){
-  const [product, setProduct] = useState(null);
-  const [error, setError] = useState(null);
-  const url = "https://fakestoreapi.com/products";
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch(url);
-        if(!response.ok){
-          setProduct(null);
-          setError("Failed to fetch products");
-          return;
-        }
-        const product = await response.json();
-        setProduct(product);
-      } catch (error) {
-        setError(error.message);
-      }
-    }
-    fetchData();
-  }, []);
-
+function HomePage() {
   return (
-    <div className="min-h-screen bg-green-300 text-gray-800 flex flex-col">
+    <div className="min-h-screen bg-gray-100 text-gray-800 flex flex-col">
+
       <section
         className="relative bg-cover bg-center h-[500px] flex items-center justify-center"
-        style={{ backgroundImage: `url(${shopping})` }}
+        style={{ backgroundImage: `url(${taskImg})` }}
       >
         <div className="bg-black bg-opacity-60 p-10 rounded text-center max-w-xl">
           <h2 className="text-white text-4xl md:text-5xl font-bold mb-4">
-            Welcome to ShopEasy
+            Task Management System
           </h2>
           <p className="text-white text-lg mb-6">
-            Explore amazing products. Sign in to start shopping!
+            Organize your tasks, set priorities, and track progress efficiently.
           </p>
-          <Link
-            to="/login"
-            className="bg-green-600 text-white px-6 py-2 rounded font-semibold hover:bg-green-700 transition"
-          >
-            Login to Continue
-          </Link>
+
+          <div className="flex gap-4 justify-center">
+            <Link
+              to="/login"
+              className="bg-blue-600 text-white px-6 py-2 rounded font-semibold hover:bg-blue-700 transition"
+            >
+              Login
+            </Link>
+
+            <Link
+              to="/signup"
+              className="bg-green-600 text-white px-6 py-2 rounded font-semibold hover:bg-green-700 transition"
+            >
+              Sign Up
+            </Link>
+          </div>
         </div>
       </section>
 
-      <div className="p-8 flex flex-row gap-5 flex-wrap justify-center">
-        {error && <p className="text-red-600">{error}</p>}
-        {product && product.map((item) => (
-          <Link to={`/products/${item.id}`} key={item.id}>
-            <ProductCard
-              image={item.image}
-              name={item.title}
-              price={item.price}
-            />
-          </Link>
-        ))}
-      </div>
+      
+      <section className="p-10 grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
+        <div className="bg-white shadow rounded p-6 border-t-4 border-green-500">
+          <h3 className="text-xl font-bold mb-2">
+            Low Priority
+          </h3>
+          <p className="text-gray-600">
+            Manage tasks that are not urgent but important.
+          </p>
+        </div>
+
+        <div className="bg-white shadow rounded p-6 border-t-4 border-yellow-400">
+          <h3 className="text-xl font-bold mb-2">Medium Priority</h3>
+          <p className="text-gray-600">
+            Track tasks that need attention soon.
+          </p>
+        </div>
+
+        <div className="bg-white shadow rounded p-6 border-t-4 border-red-500">
+          <h3 className="text-xl font-bold mb-2">High Priority</h3>
+          <p className="text-gray-600">
+            Focus on critical and urgent tasks first.
+          </p>
+        </div>
+      </section>
+
+      
+      <footer className="bg-gray-900 text-white text-center py-4 mt-auto">
+        © {new Date().getFullYear()} Task Manager | MERN Stack
+      </footer>
+
     </div>
   );
 }

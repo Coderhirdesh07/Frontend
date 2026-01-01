@@ -5,7 +5,7 @@ function RootLayout() {
   return (
     <div className="min-h-screen bg-green-300 text-gray-800 flex flex-col">
       <header className="bg-white shadow p-4 flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-green-600">ShopEasy</h1>
+        <h1 className="text-2xl font-bold text-green-600">TaskiFy</h1>
         <div className="space-x-4">
           <Link
             to="/login"
